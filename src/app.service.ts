@@ -14,7 +14,7 @@ export class AppService {
 
   constructor(private configService: ConfigService) {
     this.sqsClient = new SQSClient({
-      region: this.configService.get<string>('AWS_REGION'),
+      region: this.configService.getOrThrow<string>('AWS_REGION'),
       credentials: {
         accessKeyId: this.configService.get<string>('AWS_ACCESS_KEY_ID'),
         secretAccessKey: this.configService.get<string>(
