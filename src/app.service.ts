@@ -30,6 +30,11 @@ export class AppService {
         name: 'Carlos',
         lastname: 'Garcia',
       },
+      {
+        id: 2,
+        name: 'Carlos',
+        lastname: 'Garcia',
+      },
     ];
     const jsonStrifyArraysUsers: string = JSON.stringify(
       [...arraysUsers, { message: messageBody }],
