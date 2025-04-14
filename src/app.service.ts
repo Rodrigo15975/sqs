@@ -38,7 +38,7 @@ export class AppService {
     ];
     const jsonStrifyArraysUsers: string = JSON.stringify(arraysUsers, null, 2);
     const params: SendMessageCommandInput = {
-      QueueUrl: this.configService.get<string>('SQS_QUEUE_URL'),
+      QueueUrl: this.configService.getOrThrow<string>('SQS_QUEUE_URL'),
       MessageBody: jsonStrifyArraysUsers,
     };
 
@@ -79,7 +79,7 @@ export class AppService {
 
   async deleteMessage(receiptHandle: string): Promise<void> {
     const params = {
-      QueueUrl: this.configService.get<string>('SQS_QUEUE_URL'),
+      QueueUrl: this.configService.getOrThrow<string>('SQS_QUEUE_URL'),
       ReceiptHandle: receiptHandle,
     };
 
