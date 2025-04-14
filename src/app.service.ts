@@ -16,8 +16,8 @@ export class AppService {
     this.sqsClient = new SQSClient({
       region: this.configService.getOrThrow<string>('AWS_REGION'),
       credentials: {
-        accessKeyId: this.configService.get<string>('AWS_ACCESS_KEY_ID'),
-        secretAccessKey: this.configService.get<string>(
+        accessKeyId: this.configService.getOrThrow<string>('AWS_ACCESS_KEY_ID'),
+        secretAccessKey: this.configService.getOrThrow<string>(
           'AWS_SECRET_ACCESS_KEY',
         ),
       },
@@ -27,11 +27,6 @@ export class AppService {
     const arraysUsers = [
       {
         id: 1,
-        name: 'Carlos',
-        lastname: 'Garcia',
-      },
-      {
-        id: 2,
         name: 'Carlos',
         lastname: 'Garcia',
       },
