@@ -10,9 +10,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class AppService {
-  private sqsClient: SQSClient;
+  private readonly sqsClient: SQSClient;
 
-  constructor(private configService: ConfigService) {
+  constructor(private readonly configService: ConfigService) {
     this.sqsClient = new SQSClient({
       region: this.configService.getOrThrow<string>('AWS_REGION'),
       credentials: {
