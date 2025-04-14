@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   SQSClient,
@@ -40,29 +40,9 @@ export class AppService {
     const params: SendMessageCommandInput = {
       QueueUrl: this.configService.getOrThrow<string>('SQS_QUEUE_URL'),
       MessageBody,
-      MessageAttributes: {
-        Title: {
-          DataType: 'String',
-          StringValue: 'The Whistler',
-        },
-        Author: {
-          DataType: 'String',
-          StringValue: 'John Grisham',
-        },
-        Week: {
-          DataType: 'Number',
-          StringValue: '43',
-        },
-      },
-      MessageSystemAttributes: {
-        AWSTraceHeader: {
-          DataType: 'String',
-          StringValue: 'X-Amzn-Trace-Id',
-        },
-      },
     };
-
     const command = new SendMessageCommand(params);
+
     await this.sqsClient.send(command);
     return {
       message: 'created successfully',
@@ -79,6 +59,7 @@ export class AppService {
 
     const command = new ReceiveMessageCommand(params);
     const result = await this.sqsClient.send(command);
+    Logger.debug({ result });
     if (result.Messages && result.Messages.length > 0) {
       const { ReceiptHandle, Body } = result.Messages[0];
       await this.deleteMessage(ReceiptHandle);
