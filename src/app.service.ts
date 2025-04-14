@@ -38,7 +38,7 @@ export class AppService {
     ];
     const response = await Promise.all(
       arraysUsers.map((data) => {
-        const MessageBody: string = JSON.stringify(data, null, 2);
+        const MessageBody: string = JSON.stringify(data);
         const params: SendMessageCommandInput = {
           QueueUrl: this.configService.getOrThrow<string>('SQS_QUEUE_URL'),
           MessageBody,
@@ -64,7 +64,9 @@ export class AppService {
 
     const command = new ReceiveMessageCommand(params);
     const result = await this.sqsClient.send(command);
-
+    Logger.verbose({
+      result,
+    });
     const processed: any[] = [];
 
     if (result.Messages && result.Messages.length > 0) {
@@ -75,8 +77,7 @@ export class AppService {
         });
         await this.deleteMessage(ReceiptHandle);
         processed.push({
-          body: JSON.parse(Body || '{}'),
-          receiptHandle: ReceiptHandle,
+          data: JSON.parse(Body),
         });
       }
     }
