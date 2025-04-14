@@ -83,7 +83,7 @@ export class AppService implements OnModuleInit, OnModuleDestroy {
     const params: ReceiveMessageCommandInput = {
       QueueUrl: this.configService.getOrThrow<string>('SQS_QUEUE_URL'),
       MaxNumberOfMessages: 10,
-      WaitTimeSeconds: 10,
+      WaitTimeSeconds: 20,
       VisibilityTimeout: 30,
     };
 
