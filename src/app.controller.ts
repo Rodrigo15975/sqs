@@ -7,7 +7,7 @@ export class AppController {
 
   @Get()
   getHello() {
-    return this.appService.sendMessage('Mensaje enviada a la cola');
+    return this.appService.sendMessage();
   }
 
   @Get('receive-messages')
