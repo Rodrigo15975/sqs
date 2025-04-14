@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   SQSClient,
@@ -61,25 +61,35 @@ export class AppService {
       WaitTimeSeconds: 10,
       VisibilityTimeout: 30,
     };
-
     const command = new ReceiveMessageCommand(params);
     const result = await this.sqsClient.send(command);
-    Logger.debug({ result });
-    if (result.Messages && result.Messages.length > 0) {
-      const { ReceiptHandle, Body } = result.Messages[0];
-      await this.deleteMessage(ReceiptHandle);
+    Logger.debug({
+      result,
+    });
+    if (result.Messages.length === 0)
       return {
-        status: 'Message received',
-        body: Body,
-        receiptHandle: ReceiptHandle,
-        receiptHandleIsDeleted: true,
+        message: 'No messages in the queue',
+        count: result.Messages.length,
+        status: HttpStatus.OK,
       };
+
+    const response: any[] = [];
+    for (const message of result.Messages) {
+      const { ReceiptHandle, Body } = message;
+      const data = JSON.parse(Body, null);
+      response.push(data);
+      Logger.verbose({
+        message,
+        Body,
+        data,
+      });
+      await this.deleteMessage(ReceiptHandle);
     }
     return {
-      status: 'Message not received',
-      body: null,
-      receiptHandle: null,
-      receiptHandleIsDeleted: null,
+      message: 'Message received successfully',
+      response,
+      count: result.Messages.length,
+      status: HttpStatus.OK,
     };
   }
 
