@@ -58,7 +58,6 @@ export class AppService {
         AWSTraceHeader: {
           DataType: 'String',
           StringValue: 'X-Amzn-Trace-Id',
-          StringListValues: ['1-2-3-4'],
         },
       },
     };
