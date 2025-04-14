@@ -40,6 +40,27 @@ export class AppService {
     const params: SendMessageCommandInput = {
       QueueUrl: this.configService.getOrThrow<string>('SQS_QUEUE_URL'),
       MessageBody,
+      MessageAttributes: {
+        Title: {
+          DataType: 'String',
+          StringValue: 'The Whistler',
+        },
+        Author: {
+          DataType: 'String',
+          StringValue: 'John Grisham',
+        },
+        Week: {
+          DataType: 'Number',
+          StringValue: '43',
+        },
+      },
+      MessageSystemAttributes: {
+        AWSTraceHeader: {
+          DataType: 'String',
+          StringValue: 'X-Amzn-Trace-Id',
+          StringListValues: ['1-2-3-4'],
+        },
+      },
     };
 
     const command = new SendMessageCommand(params);
@@ -52,7 +73,7 @@ export class AppService {
   async receiveMessage(): Promise<any> {
     const params: ReceiveMessageCommandInput = {
       QueueUrl: this.configService.getOrThrow<string>('SQS_QUEUE_URL'),
-      MaxNumberOfMessages: 1,
+      MaxNumberOfMessages: 10,
       WaitTimeSeconds: 10,
       VisibilityTimeout: 30,
     };
