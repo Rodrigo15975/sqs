@@ -51,10 +51,10 @@ export class AppService {
 
   async receiveMessage(): Promise<any> {
     const params: ReceiveMessageCommandInput = {
-      QueueUrl: this.configService.get<string>('SQS_QUEUE_URL'),
+      QueueUrl: this.configService.getOrThrow<string>('SQS_QUEUE_URL'),
       MaxNumberOfMessages: 1,
       WaitTimeSeconds: 10,
-      VisibilityTimeout: 30, // Tiempo de visibilidad en segundos
+      VisibilityTimeout: 30,
     };
 
     const command = new ReceiveMessageCommand(params);
