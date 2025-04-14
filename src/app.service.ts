@@ -13,7 +13,7 @@ import {
   OnModuleDestroy,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-
+import { setTimeout } from 'timers/promises';
 @Injectable()
 export class AppService implements OnModuleInit, OnModuleDestroy {
   private readonly sqsClient: SQSClient;
@@ -52,7 +52,8 @@ export class AppService implements OnModuleInit, OnModuleDestroy {
       }
 
       Logger.log('🔴 Polling detenido.');
-      await new Promise((res) => setTimeout(res, 1200000));
+
+      await setTimeout(5000);
     }
     Logger.log('🔴 Polling detenido.');
   }
