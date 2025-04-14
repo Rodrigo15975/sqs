@@ -36,15 +36,20 @@ export class AppService {
         lastname: 'Garcia',
       },
     ];
-    const MessageBody: string = JSON.stringify(arraysUsers, null, 2);
-    const params: SendMessageCommandInput = {
-      QueueUrl: this.configService.getOrThrow<string>('SQS_QUEUE_URL'),
-      MessageBody,
-    };
-    const command = new SendMessageCommand(params);
+    const response = await Promise.all(
+      arraysUsers.map((data) => {
+        const MessageBody: string = JSON.stringify(data, null, 2);
+        const params: SendMessageCommandInput = {
+          QueueUrl: this.configService.getOrThrow<string>('SQS_QUEUE_URL'),
+          MessageBody,
+        };
+        const command = new SendMessageCommand(params);
 
-    await this.sqsClient.send(command);
+        return this.sqsClient.send(command);
+      }),
+    );
     return {
+      response,
       message: 'created successfully',
     };
   }
