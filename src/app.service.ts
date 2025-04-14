@@ -23,7 +23,7 @@ export class AppService {
       },
     });
   }
-  async sendMessage(messageBody: string) {
+  async sendMessage() {
     const arraysUsers = [
       {
         id: 1,
@@ -36,11 +36,7 @@ export class AppService {
         lastname: 'Garcia',
       },
     ];
-    const jsonStrifyArraysUsers: string = JSON.stringify(
-      [...arraysUsers, { message: messageBody }],
-      null,
-      2,
-    );
+    const jsonStrifyArraysUsers: string = JSON.stringify(arraysUsers, null, 2);
     const params: SendMessageCommandInput = {
       QueueUrl: this.configService.get<string>('SQS_QUEUE_URL'),
       MessageBody: jsonStrifyArraysUsers,
