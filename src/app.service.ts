@@ -1,13 +1,13 @@
-import { HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import {
+  DeleteMessageCommand,
+  ReceiveMessageCommand,
+  ReceiveMessageCommandInput,
   SQSClient,
   SendMessageCommand,
-  ReceiveMessageCommand,
-  DeleteMessageCommand,
   SendMessageCommandInput,
-  ReceiveMessageCommandInput,
 } from '@aws-sdk/client-sqs';
+import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class AppService {
   private sqsClient: SQSClient;
@@ -61,35 +61,30 @@ export class AppService {
       WaitTimeSeconds: 10,
       VisibilityTimeout: 30,
     };
+
     const command = new ReceiveMessageCommand(params);
     const result = await this.sqsClient.send(command);
-    Logger.debug({
-      result,
-    });
-    if (result.Messages.length === 0)
-      return {
-        message: 'No messages in the queue',
-        count: result.Messages.length,
-        status: HttpStatus.OK,
-      };
 
-    const response: any[] = [];
-    for (const message of result.Messages) {
-      const { ReceiptHandle, Body } = message;
-      const data = JSON.parse(Body, null);
-      response.push(data);
-      Logger.verbose({
-        message,
-        Body,
-        data,
-      });
-      await this.deleteMessage(ReceiptHandle);
+    const processed: any[] = [];
+
+    if (result.Messages && result.Messages.length > 0) {
+      for (const msg of result.Messages) {
+        const { ReceiptHandle, Body } = msg;
+        Logger.debug({
+          msg,
+        });
+        await this.deleteMessage(ReceiptHandle);
+        processed.push({
+          body: JSON.parse(Body || '{}'),
+          receiptHandle: ReceiptHandle,
+        });
+      }
     }
+
     return {
-      message: 'Message received successfully',
-      response,
-      count: result.Messages.length,
-      status: HttpStatus.OK,
+      status: processed.length > 0 ? 'Messages received' : 'No messages',
+      count: processed.length,
+      messages: processed,
     };
   }
 
