@@ -11,7 +11,7 @@ export class AppController {
   }
 
   @Get('receive-messages')
-  async receiveMessages(): Promise<void> {
-    return await this.appService.receiveMessage();
+  receiveMessages(): Promise<void> {
+    return this.appService.receiveMessage();
   }
 }
