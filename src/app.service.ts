@@ -36,10 +36,10 @@ export class AppService {
         lastname: 'Garcia',
       },
     ];
-    const jsonStrifyArraysUsers: string = JSON.stringify(arraysUsers, null, 2);
+    const MessageBody: string = JSON.stringify(arraysUsers, null, 2);
     const params: SendMessageCommandInput = {
       QueueUrl: this.configService.getOrThrow<string>('SQS_QUEUE_URL'),
-      MessageBody: jsonStrifyArraysUsers,
+      MessageBody,
     };
 
     const command = new SendMessageCommand(params);
